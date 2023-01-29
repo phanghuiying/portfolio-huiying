@@ -8,10 +8,17 @@ import {
   Button,
   VStack,
 } from "@chakra-ui/react";
-import { useState } from "react";
-import { NextPage } from "next";
+import { ReactElement, useState } from "react";
 
-const MessageForm: NextPage = () => {
+interface Dictionary {
+  [key: string]: any;
+}
+interface MessageFormProps {
+  addMessage: (item: Dictionary) => void;
+  latestId: number | null;
+}
+
+const MessageForm = ({ addMessage, latestId }: MessageFormProps): ReactElement => {
   const [name, settName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [message, setMessage] = useState<string>("");
@@ -51,12 +58,15 @@ const MessageForm: NextPage = () => {
   };
 
   const handleSubmit = () => {
-    const validation = validateFields()
-    console.log("submit button clicked")
+    const validation = validateFields();
+    console.log("submit button clicked");
     if (validation) {
-        // handle submit api
+      addMessage({ name: name, email: email, message: message, id: latestId});
+      settName("");
+      setEmail("");
+      setMessage("");
     } else {
-        return;
+      return;
     }
   };
 

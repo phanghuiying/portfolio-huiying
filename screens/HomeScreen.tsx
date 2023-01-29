@@ -15,8 +15,52 @@ import * as React from "react";
 import { BsLinkedin, BsGithub } from "react-icons/bs";
 import EmojiReaction from "@/components/EmojiReaction";
 import MessageForm from "@/components/MessageForm";
+import { useState, useEffect } from "react";
+
+interface MessagesDictionary {
+  [key: string]: Array<Dictionary>;
+}
+
+interface Dictionary {
+  [key: string]: any;
+}
 
 const HomeScreen: NextPage = () => {
+  const [messages, setMessages] = useState<MessagesDictionary>({
+    messages: [],
+  });
+  const [latestId, setLatestId] = useState<number | null>(null);
+
+  const addMessageToData = (item: Dictionary): void => {
+    console.log("message to post", item);
+    const requestOptions: RequestInit = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(item),
+    };
+
+    fetch("http://localhost:9000/messages", requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        let messageValues = messages["messages"];
+        setMessages({ messages: messageValues });
+        setLatestId(messageValues.length + 1);
+      });
+  };
+
+  useEffect(() => {
+    fetch("http://localhost:9000/messages").then((response) => {
+      response.json().then((msgs: Array<Dictionary>) => {
+        setMessages({
+          messages: msgs
+        });
+        setLatestId(msgs.length + 1);
+      });
+    });
+  }, []);
+
   return (
     <>
       <Head>
@@ -64,10 +108,11 @@ const HomeScreen: NextPage = () => {
                   <BsGithub size="1.25em" className="icon" />
                 </a>
               </HStack>
-              <HStack pt={8} >
+              <HStack pt={8}>
                 <EmojiReaction />
-                <MessageForm />
+                <MessageForm addMessage={addMessageToData} latestId={latestId}/>
               </HStack>
+              {/* pass messages state to MessageDisplay */}
             </VStack>
           </Flex>
         </Box>
