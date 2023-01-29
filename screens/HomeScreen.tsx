@@ -13,6 +13,8 @@ import {
 } from "@chakra-ui/react";
 import * as React from "react";
 import { BsLinkedin, BsGithub } from "react-icons/bs";
+import EmojiReaction from "@/components/EmojiReaction";
+import MessageForm from "@/components/MessageForm";
 
 const HomeScreen: NextPage = () => {
   return (
@@ -61,6 +63,10 @@ const HomeScreen: NextPage = () => {
                 <a href="https://github.com/phanghuiying" target="_blank">
                   <BsGithub size="1.25em" className="icon" />
                 </a>
+              </HStack>
+              <HStack pt={8} >
+                <EmojiReaction />
+                <MessageForm />
               </HStack>
             </VStack>
           </Flex>
