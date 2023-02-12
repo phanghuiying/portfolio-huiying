@@ -7,40 +7,10 @@
       "id": 1
     },
     {
-      "name": "a",
-      "email": "a@b.com",
-      "message": "c",
-      "id": 2
-    },
-    {
-      "name": "hi",
-      "email": "test@gmail.com",
+      "name": "HUIYING",
+      "email": "huiying@gmail.com",
       "message": "hello",
-      "id": 3
-    },
-    {
-      "name": "hi",
-      "email": "a@b.com",
-      "message": "c",
-      "id": 4
-    },
-    {
-      "name": "test",
-      "email": "test@gmail.com",
-      "message": "test",
-      "id": 5
-    },
-    {
-      "name": "test",
-      "email": "test@gmail.com",
-      "message": "test",
-      "id": 6
-    },
-    {
-      "name": "heloo",
-      "email": "test@gmail.com",
-      "message": "hi",
-      "id": 7
+      "id": 2
     }
   ]
 }

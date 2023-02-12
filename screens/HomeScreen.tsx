@@ -15,7 +15,8 @@ import * as React from "react";
 import { BsLinkedin, BsGithub } from "react-icons/bs";
 import EmojiReaction from "@/components/EmojiReaction";
 import MessageForm from "@/components/MessageForm";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import MessageDisplay from "@/components/MessageDisplay";
 
 interface MessagesDictionary {
   [key: string]: Array<Dictionary>;
@@ -29,7 +30,6 @@ const HomeScreen: NextPage = () => {
   const [messages, setMessages] = useState<MessagesDictionary>({
     messages: [],
   });
-  const [latestId, setLatestId] = useState<number | null>(null);
 
   const addMessageToData = (item: Dictionary): void => {
     console.log("message to post", item);
@@ -42,21 +42,47 @@ const HomeScreen: NextPage = () => {
     };
 
     fetch("http://localhost:9000/messages", requestOptions)
-      .then((response) => response.json())
-      .then((data) => {
-        let messageValues = messages["messages"];
-        setMessages({ messages: messageValues });
-        setLatestId(messageValues.length + 1);
-      });
+      .then((response) => {
+        if (response.status === 201) {
+          fetch("http://localhost:9000/messages").then((response) => {
+            response.json().then((msgs: Array<Dictionary>) => {
+              setMessages({
+                messages: msgs,
+              });
+              console.log(messages);
+            });
+          });
+        }
+      })
   };
+
+  const deleteMessage = useCallback(
+    (msg: Dictionary) => {
+      console.log("deleted message called");
+      const msgs = messages["messages"];
+      const requestOptions = {
+        method: "DELETE",
+      };
+      fetch(`http://localhost:9000/messages/${msg.id}`, requestOptions).then(
+        (response) => {
+          if (response.ok) {
+            const idx = msgs.indexOf(msg);
+            msgs.splice(idx, 1); // delete 1 item starting from idx
+            setMessages({ messages: msgs });
+          }
+        }
+      );
+    },
+    [messages]
+  );
 
   useEffect(() => {
     fetch("http://localhost:9000/messages").then((response) => {
       response.json().then((msgs: Array<Dictionary>) => {
         setMessages({
-          messages: msgs
+          messages: msgs,
         });
-        setLatestId(msgs.length + 1);
+        console.log(messages);
       });
     });
   }, []);
@@ -78,7 +104,6 @@ const HomeScreen: NextPage = () => {
           <Container py={{ base: "4", lg: "5" }}>
             <HStack spacing="10" justify="space-between">
               <Text as="kbd">Hui Ying</Text>
-              <Button variant="primary">Resume</Button>
             </HStack>
           </Container>
         </Box>
@@ -110,11 +135,16 @@ const HomeScreen: NextPage = () => {
               </HStack>
               <HStack pt={8}>
                 <EmojiReaction />
-                <MessageForm addMessage={addMessageToData} latestId={latestId}/>
+                <MessageForm addMessage={addMessageToData} />
               </HStack>
-              {/* pass messages state to MessageDisplay */}
             </VStack>
           </Flex>
+        </Box>
+        <Box>
+          <MessageDisplay
+            msgs={messages["messages"]}
+            deleteMessage={deleteMessage}
+          />
         </Box>
       </Box>
     </>

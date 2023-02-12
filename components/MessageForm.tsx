@@ -8,64 +8,36 @@ import {
   Button,
   VStack,
 } from "@chakra-ui/react";
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 
 interface Dictionary {
   [key: string]: any;
 }
 interface MessageFormProps {
   addMessage: (item: Dictionary) => void;
-  latestId: number | null;
 }
 
-const MessageForm = ({ addMessage, latestId }: MessageFormProps): ReactElement => {
-  const [name, settName] = useState<string>("");
+const MessageForm = ({ addMessage }: MessageFormProps): ReactElement => {
+  const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [isNameInvalid, setIsNameInvalid] = useState<boolean>(false);
   const [isEmailInvalid, setIsEmailInvalid] = useState<boolean>(false);
   const [isMessageInvalid, setIsMessageInvalid] = useState<boolean>(false);
 
-  const isSubmitting = true;
-
   const validateEmail = (em: string): boolean => {
     var re = /\S+@\S+\.\S+/;
     return re.test(em);
   };
 
-  const validateFields = (): boolean => {
-    setIsNameInvalid(false);
-    setIsEmailInvalid(false);
-    setIsMessageInvalid(false);
-
-    if (name === "") {
-      setIsNameInvalid(true);
-    }
-
-    if (email === "" || !validateEmail(email)) {
-      setIsEmailInvalid(true);
-    }
-
-    if (message === "") {
-      setIsMessageInvalid(true);
-    }
-
-    if (isNameInvalid || isEmailInvalid || isMessageInvalid) {
-      return false;
-    } else {
-      return true;
-    }
-  };
-
   const handleSubmit = () => {
-    const validation = validateFields();
-    console.log("submit button clicked");
-    if (validation) {
-      addMessage({ name: name, email: email, message: message, id: latestId});
-      settName("");
+    if (isNameInvalid || isEmailInvalid || isMessageInvalid) {
+      return;
+    } else {
+      addMessage({ name: name, email: email, message: message });
+      setName("");
       setEmail("");
       setMessage("");
-    } else {
       return;
     }
   };
@@ -81,7 +53,14 @@ const MessageForm = ({ addMessage, latestId }: MessageFormProps): ReactElement =
           <Input
             type="text"
             value={name}
-            onChange={(e) => settName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value);
+              if (e.target.value === "") {
+                setIsNameInvalid(true);
+              } else {
+                setIsNameInvalid(false);
+              }
+            }}
           />
           <FormErrorMessage>Name is required.</FormErrorMessage>
         </FormControl>
@@ -90,7 +69,14 @@ const MessageForm = ({ addMessage, latestId }: MessageFormProps): ReactElement =
           <Input
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (email === "" || !validateEmail(email)) {
+                setIsEmailInvalid(true);
+              } else {
+                setIsEmailInvalid(false);
+              }
+            }}
           />
           <FormHelperText>We'll never share your email.</FormHelperText>
           <FormErrorMessage>
@@ -104,17 +90,18 @@ const MessageForm = ({ addMessage, latestId }: MessageFormProps): ReactElement =
           <Input
             type="string"
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={(e) => {
+              setMessage(e.target.value);
+              if (message === "") {
+                setIsMessageInvalid(true);
+              } else {
+                setIsMessageInvalid(false);
+              }
+            }}
           />
           <FormErrorMessage>Message cannot be empty.</FormErrorMessage>
         </FormControl>
-        <Button
-          mt={4}
-          colorScheme="pink"
-          isLoading={!isSubmitting}
-          type="submit"
-          onClick={handleSubmit}
-        >
+        <Button mt={4} colorScheme="pink" type="submit" onClick={handleSubmit}>
           Submit
         </Button>
       </VStack>
