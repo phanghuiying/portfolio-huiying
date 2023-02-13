@@ -21,7 +21,7 @@ interface MessageDisplayProps {
 const MessageDisplay = ({ msgs, deleteMessage }: MessageDisplayProps) => {
   const showMessage = (msg: Dictionary) => {
     return (
-      <Card>
+      <Card key={msg.id}>
         <CardHeader>
           <Heading size="md">{msg["name"]}</Heading>
         </CardHeader>

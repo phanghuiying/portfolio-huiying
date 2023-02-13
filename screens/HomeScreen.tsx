@@ -32,7 +32,6 @@ const HomeScreen: NextPage = () => {
   });
 
   const addMessageToData = (item: Dictionary): void => {
-    console.log("message to post", item);
     const requestOptions: RequestInit = {
       method: "POST",
       headers: {
@@ -49,7 +48,6 @@ const HomeScreen: NextPage = () => {
               setMessages({
                 messages: msgs,
               });
-              console.log(messages);
             });
           });
         }
@@ -58,7 +56,6 @@ const HomeScreen: NextPage = () => {
 
   const deleteMessage = useCallback(
     (msg: Dictionary) => {
-      console.log("deleted message called");
       const msgs = messages["messages"];
       const requestOptions = {
         method: "DELETE",
@@ -82,7 +79,6 @@ const HomeScreen: NextPage = () => {
         setMessages({
           messages: msgs,
         });
-        console.log(messages);
       });
     });
   }, []);

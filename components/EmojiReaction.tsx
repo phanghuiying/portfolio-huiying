@@ -14,7 +14,7 @@ const EmojiReaction: NextPage = () => {
       <Text>{emoji}</Text>
       <HStack>
         {emojis.map((mood) => {
-          return <Button onClick={() => setEmoji(mood)}>{mood}</Button>;
+          return <Button onClick={() => setEmoji(mood)} key={emojis.indexOf(mood)}>{mood}</Button>;
         })}
       </HStack>
     </VStack>
